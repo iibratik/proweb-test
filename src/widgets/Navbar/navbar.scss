@@ -1,0 +1,9 @@
+.navbar {
+    width: 100%;
+    border-bottom: 1px solid var(--primary-border-color);
+    &__title{
+        font-size: 24px;
+        height: 100%;
+        font-weight: 500;
+    }
+}

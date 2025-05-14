@@ -1,0 +1,10 @@
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 15px;
+    cursor: pointer;
+    &.active {
+        background: var(--active-icon-list-color);
+    }
+}
