@@ -1,0 +1,9 @@
+.chip {
+    background-color: var(--chip-default-bg-color);
+    padding: 8px 12px;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+}

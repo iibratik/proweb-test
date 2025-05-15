@@ -1,16 +1,7 @@
 @use "fonts.scss";
 @use "varibles.scss";
 @use "zerostyle.scss";
-.container {
-    margin: 0 auto;
-    max-width: 1600px;
-    padding: 0 15px;
-    width: 100%;
-}
-.p-20-horizontal {
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
+
 #app {
     display: flex;
 }

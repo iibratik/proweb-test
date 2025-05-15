@@ -1,0 +1,23 @@
+.dashboard {
+    &-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-bottom: 1px solid var(--primary-border-color);
+        &__title {
+            font-size: 24px;
+            font-weight: 500;
+        }
+    }
+    &-body {
+        padding: 20px;
+        display: flex;
+        width: 100%;
+        gap: 15px;
+        & .lessons-lists{
+            display: flex;
+            gap: 15px;
+        }
+    }
+}

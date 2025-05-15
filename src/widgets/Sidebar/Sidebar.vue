@@ -35,7 +35,7 @@ import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 
-import IconListItem from "@/shared/IconListItem/IconListItem.vue";
+import IconListItem from "@/shared/ui/IconListItem/IconListItem.vue";
 const routers = reactive([
   {
     path: "/",
