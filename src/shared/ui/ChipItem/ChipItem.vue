@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import "./chipItem.scss";
 
-const props = defineProps<{
+defineProps<{
   color: string;
   active?: boolean;
 }>();

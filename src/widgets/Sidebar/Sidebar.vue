@@ -48,7 +48,7 @@ const routers = reactive([
     icon: "avatar",
   },
 ]);
-const props = defineProps<{
+defineProps<{
   isActive: boolean;
 }>();
 const activeStyle: StyleValue = { left: 0, position: "relative" };

@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import "./minichip.scss";
-const props = defineProps<{
+defineProps<{
   color: string;
 }>();
 </script>

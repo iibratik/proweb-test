@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import "./avatar.scss";
-const props = defineProps<{
+defineProps<{
   avatarImage: string;
   avatarAlt?: string;
 }>();
