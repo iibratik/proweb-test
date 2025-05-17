@@ -14,7 +14,7 @@ export const useLessonsStore = defineStore('lessons', {
         }
     },
     getters: {
-        getLessons(state) {
+        getCommonLessons(state) {
             return state.commonLessons
         },
         getLessonCategories(state) {
@@ -29,7 +29,7 @@ export const useLessonsStore = defineStore('lessons', {
     },
     actions: {
         async getAllLessons() {
-            if (this.commonLessons.length == 0) {
+            if (this.commonLessons.length === 0) {
                 try {
                     const response = await fetch('https://main.proweb.uz/api/v1/launches/external/course/research/')
                     const json = response.json()
@@ -37,14 +37,32 @@ export const useLessonsStore = defineStore('lessons', {
                         const result = body.results
                         result.forEach((lesson: Lesson) => {
                             lesson.categories.forEach((category: LessonCategory) => {
+
                                 if (!this.lessonsCategory.some(existCategory => existCategory.id === category.id)) {
                                     this.lessonsCategory.push(category)
                                 }
                             })
-                            lesson.open_lessons.forEach(ol => this.openLessons.push(ol))
+                            const sortedOpenLessons = lesson.open_lessons.sort((a, b) => {
+                                const dateDiff = new Date(a.date).getTime() - new Date(b.date).getTime()
+                                if (dateDiff !== 0) return dateDiff
+                                return a.time.localeCompare(b.time)
+                            })
+                            const sortedGroups = lesson.groups.sort((a, b) => {
+                                const dateDiff = new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+                                if (dateDiff !== 0) return dateDiff
+                                return a.study_time.localeCompare(b.study_time)
+                            })
                             if (lesson.groups.length > 0) {
-                                this.commonLessons.push(lesson)
-                                this.filteredLessons.push(lesson)
+                                this.commonLessons.push({
+                                    ...lesson,
+                                    groups: sortedGroups,
+                                    open_lessons: sortedOpenLessons,
+                                })
+                                this.filteredLessons.push({
+                                    ...lesson,
+                                    groups: sortedGroups,
+                                    open_lessons: sortedOpenLessons,
+                                })
                             }
                         })
                     })
@@ -68,17 +86,43 @@ export const useLessonsStore = defineStore('lessons', {
             } else {
                 this.setFilteredLesson()
             }
+
         },
         setFilteredLesson() {
+            this.filteredLessons = [...this.commonLessons];
             this.filteredLessons = this.filterByAllowed(this.filteredLessons, this.activeFilterCategory)
-            console.log(this.filteredLessons);
+            this.filteredLessons = this.sortLessonsByEarliestGroupDate(this.filteredLessons);
         },
-        filterByAllowed(lessons: Lesson[], allowedCategories: LessonCategory[]) {
-            const allowedSet = new Set(allowedCategories.map(cat => cat.key))
+        filterByAllowed(lessons: Lesson[], allowedCategories: LessonCategory[]): Lesson[] {
+            const allowedKeys = new Set(allowedCategories.map(cat => cat.key));
+            return lessons.filter(lesson => {
+                const lessonCategoryKeys = lesson.categories.map(cat => cat.key);
+                const hasMatch = lessonCategoryKeys.some(key => allowedKeys.has(key))
+                return hasMatch;
+            });
+        },
+        sortLessonsByEarliestGroupDate(lessons: Lesson[]): Lesson[] {
+            return lessons.slice().sort((a, b) => {
+                const dateA = this.getEarliestGroupDate(a);
+                const dateB = this.getEarliestGroupDate(b);
+                return dateA - dateB;
+            });
+        },
+        getEarliestGroupDate(lesson: Lesson): number {
+            if (!lesson.groups?.length) return Infinity;
 
-            return lessons.filter(lesson =>
-                lesson.categories.some(cat => allowedSet.has(cat.key))
-            )
+            return Math.min(
+                ...lesson.groups
+                    .map(group => new Date(group.start_date).getTime())
+                    .filter(time => !isNaN(time))
+            );
+        },
+        resetLessons() {
+            this.lessonsCategory = []
+            this.commonLessons = []
+            this.openLessons = []
+            this.activeFilterCategory = []
+            this.filteredLessons = []
         }
     }
 })

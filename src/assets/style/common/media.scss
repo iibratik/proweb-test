@@ -1,0 +1,95 @@
+@media screen and (max-width: 1320px) {
+    .sidebar {
+        &-list__title {
+            display: block;
+        }
+        &-menu {
+            display: none;
+        }
+    }
+    .dashboard {
+        &-header {
+            overflow-x: scroll;
+            &-list {
+                & .chip {
+                    width: max-content;
+                }
+            }
+        }
+    }
+    .isYouScroll {
+        width: 500%;
+    }
+}
+@media screen and (max-width: 960px) {
+    .navbar {
+        &-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+    .sidebar {
+        min-width: 20%;
+        max-width: 20%;
+        left: -100%;
+        position: absolute;
+        margin: 0;
+        height: 100vh;
+        padding: 20px;
+        background: #f9faf5;
+        &-header{
+            &__title{
+                transform: scale(0.4);
+            }
+        }
+        &-content{
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        &-list {
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            &s{
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            &.list-item {
+                transform: scale(1.5);
+            }
+            &__title {
+                display: none;
+            }
+        }
+
+        &-menu {
+            user-select: none;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 500;
+            display: block;
+        }
+    }
+}
+@media screen and (max-width: 768px) {
+.profile-card{
+    flex-direction: column;
+}
+.profile-card-body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-items: center;
+}
+.profile-desc{
+    font-size: 16px;
+    text-align: center;
+}
+
+}

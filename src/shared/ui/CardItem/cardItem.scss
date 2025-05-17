@@ -55,7 +55,6 @@
             background-color: #eeecdc;
             border-radius: 0 0 20px 20px;
             padding: 15px;
-            overflow: hidden;
             & .main {
                 &-content {
                     display: flex;
@@ -69,15 +68,15 @@
                         font-size: 14px;
                         color: #616161;
                     }
-                    & .list-body{
+                    & .list-body {
                         margin-top: 10px;
-                        & .time{
+                        & .time {
                             padding: 10px;
                             font-size: 16px;
-                            &s{
+                            &s {
                                 display: flex;
                                 border-radius: 20px;
-                                background-color: #F9FAF5;
+                                background-color: #f9faf5;
                                 flex-direction: column;
                             }
                         }

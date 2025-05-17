@@ -1,6 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="container navbar-content p-20-horizontal">
+      <button class="sidebar-menu" @click="$emit('switch-sidebar')">Меню</button>
       <h2 class="navbar__title">{{ currentTitle }}</h2>
     </div>
   </nav>

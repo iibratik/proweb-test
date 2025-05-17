@@ -6,6 +6,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [vue()],
   server: {
+    allowedHosts: ['6cbe-84-54-78-151.ngrok-free.app'],
     port: 3000
   },
   resolve: {

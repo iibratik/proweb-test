@@ -1,10 +1,23 @@
 .dashboard {
+    &-content {
+        width: 100%;
+        overflow: hidden;
+    }
     &-header {
         padding: 20px;
+        width: 100%;
         display: flex;
         align-items: center;
         gap: 15px;
         border-bottom: 1px solid var(--primary-border-color);
+        &-list {
+            &s {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+            }
+        }
         &__title {
             font-size: 24px;
             font-weight: 500;
@@ -13,11 +26,21 @@
     &-body {
         padding: 20px;
         display: flex;
-        width: 100%;
+        width: 50%;
         gap: 15px;
-        & .lessons-lists{
+        & .lessons-lists {
             display: flex;
             gap: 15px;
         }
+    }
+}
+.isYouScroll {
+    overflow-x: hidden;
+    width: 80%;
+    scrollbar-width: none;
+    border-left: 1px solid var(--primary-border-color);
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
     }
 }

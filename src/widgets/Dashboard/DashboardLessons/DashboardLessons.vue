@@ -1,11 +1,7 @@
 <template>
-  <div class="dashboard-body">
-    <ul class="lessons-lists">
-      <li
-        class="lesson-list"
-        v-for="lesson in lessonStore.getFilteredLessons"
-        :key="lesson.id"
-      >
+  <div class="dashboard-body" @touchstart="touchStart" @touchend="touchEnd">
+    <ul class="lessons-lists" ref="dashboardContent">
+      <li class="lesson-list" v-for="lesson in sortedLessons" :key="lesson.id">
         <CardItem
           class="lesson-card"
           :item="lesson"
@@ -22,14 +18,48 @@
 <script setup lang="ts">
 import CardItem from "@/shared/ui/CardItem/cardItem.vue";
 import OpenLesson from "@/types/openlesson";
-import { computed, onMounted } from "vue";
+import { computed, ref, watch } from "vue";
 import { useLessonsStore } from "@/store/lessonsState";
 import LessonGroup from "@/types/lessonGroups";
+import { useScrollState } from "@/store/scrollState";
+
 const lessonStore = useLessonsStore();
-onMounted(() => {
-  lessonStore.getAllLessons();
+const scrollStore = useScrollState();
+const dashboardContent = ref<HTMLDivElement | null>(null);
+const startX = ref(0);
+const startY = ref(0);
+const sortedLessons = computed(() => {
+  return lessonStore.getFilteredLessons
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(a.groups[0].start_date).getTime() -
+        new Date(b.groups[0].start_date).getTime()
+    );
 });
 
+watch(
+  () => scrollStore.getScrollWidth,
+  () => {
+    setListScroll();
+  },
+  { immediate: true }
+);
+
+function setListScroll() {
+  if (dashboardContent.value) {
+    console.log(dashboardContent.value.offsetWidth);
+    if (
+      scrollStore.getScrollWidth >=
+      dashboardContent.value.offsetWidth / scrollStore.getScrollBorder
+    ) {
+      scrollStore.setStopScroll();
+      return;
+    } else {
+      dashboardContent.value.style.transform = `translateX(-${scrollStore.getScrollWidth}px)`;
+    }
+  }
+}
 function formattedStartDay(groups: Array<LessonGroup>) {
   if (groups[0]?.start_date) {
     const changedStartDay = groups.map((group) => {
@@ -65,34 +95,31 @@ function formattedTime(groups: LessonGroup[]) {
   return [] as string[];
 }
 function formatedOpenLessons(lessons: OpenLesson[]) {
-  if (lessonStore.openLessons.length > 0) {
-    const result = setMergeLesson(lessons);
-    const uniqueLessons = computed(() => {
-      const sameDate = new Set<string>();
-      return result.filter((lesson) => {
-        if (sameDate.has(lesson.date)) return false;
-        sameDate.add(lesson.date);
-        return true;
-      });
+  const result = setMergeLesson(lessons);
+  const uniqueLessons = computed(() => {
+    const sameDate = new Set<string>();
+    return result.filter((lesson) => {
+      if (sameDate.has(lesson.date)) return false;
+      sameDate.add(lesson.date);
+      return true;
     });
+  });
 
-    const formatedLessons = uniqueLessons.value.map((lesson: OpenLesson) => {
-      const formatedTimes = lesson.times.map((time) => changeTimeFormat(time));
-      const openLesson = {
-        id: lesson.id,
-        format: lesson.format,
-        practical: lesson.practical,
-        date: changeDayFormat(lesson.date),
-        time: changeTimeFormat(lesson.time),
-        times: [...formatedTimes],
-        weekDay: getWeekDayByDate(lesson.date),
-      };
+  const formatedLessons = uniqueLessons.value.map((lesson: OpenLesson) => {
+    const formatedTimes = lesson.times.map((time) => changeTimeFormat(time));
+    const openLesson = {
+      id: lesson.id,
+      format: lesson.format,
+      practical: lesson.practical,
+      date: changeDayFormat(lesson.date),
+      time: changeTimeFormat(lesson.time),
+      times: [...formatedTimes],
+      weekDay: getWeekDayByDate(lesson.date),
+    };
 
-      return openLesson;
-    });
-    return formatedLessons;
-  }
-  return [] as OpenLesson[];
+    return openLesson;
+  });
+  return formatedLessons;
 }
 function changeDayFormat(curentDay: string) {
   const formatingDay = new Date(curentDay);
@@ -128,11 +155,7 @@ function setMergeLesson(lessons: OpenLesson[]) {
   for (const openLesson of lessons) {
     if (!map.has(openLesson.date)) {
       map.set(openLesson.date, {
-        id: openLesson.id,
-        format: openLesson.format,
-        practical: false,
-        date: openLesson.date,
-        time: openLesson.time,
+        ...openLesson,
         times: [openLesson.time],
         weekDay: openLesson.weekDay,
       });
@@ -144,5 +167,25 @@ function setMergeLesson(lessons: OpenLesson[]) {
     }
   }
   return Array.from(map.values());
+}
+
+function touchStart(event: TouchEvent) {
+  const touch = event.touches[0];
+  startX.value = touch.clientX;
+  startY.value = touch.clientY;
+}
+function touchEnd(event: TouchEvent) {
+  const touch = event.changedTouches[0];
+  const touchEndX = touch.clientX;
+  const touchEndY = touch.clientY;
+  const deltaX = touchEndX - startX.value;
+  const deltaY = touchEndY - startY.value;
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (deltaX > 30) {
+      scrollStore.reduceScrollWidth();
+    } else {
+      scrollStore.addScrollWidth();
+    }
+  }
 }
 </script>

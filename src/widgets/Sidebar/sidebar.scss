@@ -1,12 +1,11 @@
 .sidebar {
     min-width: 20.83%;
     max-width: 20.83%;
-    height: 94vh;
+    height: 100%;
     margin-top: 20px;
     margin-bottom: 20px;
     margin-left: 20px;
     padding-right: 20px;
-    border-right: 1px solid var(--primary-border-color);
     &-header {
         margin-bottom: 15.5%;
         &__title {
@@ -15,9 +14,8 @@
             font-weight: bold;
         }
     }
-    &-list{
-
-        &__title{
+    &-list {
+        &__title {
             font-size: 18px;
             font-weight: 500;
         }
