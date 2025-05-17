@@ -1,5 +1,4 @@
 <template>
-  <Loader />
   <div class="profile">
     <div class="profile-content">
       <ProfileCard :profile-info="profileInfo" />
