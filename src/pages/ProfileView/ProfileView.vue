@@ -1,4 +1,5 @@
 <template>
+  <Loader />
   <div class="profile">
     <div class="profile-content">
       <ProfileCard :profile-info="profileInfo" />
@@ -43,6 +44,7 @@
 import ProfileCard from "@/widgets/Profile/ProfileCard.vue";
 import "./profileView.scss";
 import { useDeveloperState } from "@/store/developerState";
+import Loader from "@/shared/ui/Loader/loader.vue";
 const developerState = useDeveloperState().$state;
 const profileInfo: ProfileInfo = {
   age: developerState.age,
@@ -52,5 +54,3 @@ const profileInfo: ProfileInfo = {
   name: developerState.name,
 };
 </script>
-
-<style scoped></style>
