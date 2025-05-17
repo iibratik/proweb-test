@@ -1,5 +1,49 @@
-# Vue 3 + TypeScript + Vite
+# 🧪 Тестовое задание для Frontend-разработчика — «Доска запусков»
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 🧰 Используемые технологии
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+| Технология     | Используется |
+|----------------|--------------|
+| Vue 3 (Composition API) | ✅ |
+| Pinia (состояние)       | ✅ |
+| Vue Router              | ✅ |
+| Fetch API               | ✅ |
+| SCSS / CSS              | ✅ |
+| TypeScript              | ✅ |
+| Skeleton Loading        | ✅ |
+| FSD-архитектура         | ✅ |
+
+---
+
+## 🚀 Как запустить проект
+
+1. Клонируй репозиторий:
+
+```bash
+git clone https://github.com/твой-юзернейм/название-репозитория.git
+```
+
+2. Перейди в папку проекта:
+
+```bash
+cd название-репозитория
+```
+
+3. Установи зависимости:
+
+```bash
+npm install
+```
+
+4. Запусти локальный сервер:
+
+```bash
+npm run dev
+```
+
+5. Перейди в браузер по адресу:
+
+```
+http://localhost:3000
+```
+
