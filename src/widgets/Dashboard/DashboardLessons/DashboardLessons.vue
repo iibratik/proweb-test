@@ -1,14 +1,18 @@
 <template>
   <div class="dashboard-body" @touchstart="touchStart" @touchend="touchEnd">
     <ul class="lessons-lists" ref="dashboardContent">
-      <li class="lesson-list" v-for="lesson in sortedLessons" :key="lesson.id">
+      <li class="lesson-list" v-for="(lesson, index) in sortedLessons" :key="lesson.id">
         <CardItem
+          draggable="true"
           class="lesson-card"
           :item="lesson"
           :lesson_days="formattedDays(lesson.groups)"
           :start_day="formattedStartDay(lesson.groups)"
           :lessons_time="formattedTime(lesson.groups)"
           :open_lessons="formatedOpenLessons(lesson.open_lessons)"
+          @dragstart="onLessonDragStart(index)"
+          @dragover.prevent
+          @drop="onLessonDrop(index)"
         />
       </li>
     </ul>
@@ -18,48 +22,50 @@
 <script setup lang="ts">
 import CardItem from "@/shared/ui/CardItem/cardItem.vue";
 import OpenLesson from "@/types/openlesson";
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useLessonsStore } from "@/store/lessonsState";
 import LessonGroup from "@/types/lessonGroups";
 import { useScrollState } from "@/store/scrollState";
+import Lesson from "@/types/lesson";
 
 const lessonStore = useLessonsStore();
 const scrollStore = useScrollState();
 const dashboardContent = ref<HTMLDivElement | null>(null);
 const startX = ref(0);
 const startY = ref(0);
-const sortedLessons = computed(() => {
-  return lessonStore.getFilteredLessons
-    .slice()
-    .sort(
-      (a, b) =>
-        new Date(a.groups[0].start_date).getTime() -
-        new Date(b.groups[0].start_date).getTime()
-    );
-});
+const lessonDragIndex = ref<null | number>(null);
+// const sortedLessons = computed(() => {
+//   return lessonStore.getFilteredLessons
+//     .slice()
+//     .sort(
+//       (a, b) =>
+//         new Date(a.groups[0].start_date).getTime() -
+//         new Date(b.groups[0].start_date).getTime()
+//     );
+// });
+const sortedLessons = reactive<Lesson[]>([]);
 
 watch(
-  () => scrollStore.getScrollWidth,
-  () => {
-    setListScroll();
+  [() => scrollStore.getScrollWidth, () => lessonStore.getFilteredLessons],
+  ([newScroll, newLessons], [oldScroll, oldLessons]) => {
+    if (newScroll !== oldScroll) {
+      setListScroll();
+    }
+    if (newLessons !== oldLessons) {
+      newLessons
+        .slice()
+        .sort(
+          (a, b) =>
+            new Date(a.groups[0].start_date).getTime() -
+            new Date(b.groups[0].start_date).getTime()
+        );
+      sortedLessons.splice(0, sortedLessons.length, ...newLessons);
+    }
   },
   { immediate: true }
 );
 
-function setListScroll() {
-  if (dashboardContent.value) {
-    console.log(dashboardContent.value.offsetWidth);
-    if (
-      scrollStore.getScrollWidth >=
-      dashboardContent.value.offsetWidth / scrollStore.getScrollBorder
-    ) {
-      scrollStore.setStopScroll();
-      return;
-    } else {
-      dashboardContent.value.style.transform = `translateX(-${scrollStore.getScrollWidth}px)`;
-    }
-  }
-}
+// FORMATING LOGIC
 function formattedStartDay(groups: Array<LessonGroup>) {
   if (groups[0]?.start_date) {
     const changedStartDay = groups.map((group) => {
@@ -169,6 +175,7 @@ function setMergeLesson(lessons: OpenLesson[]) {
   return Array.from(map.values());
 }
 
+//scrool logic
 function touchStart(event: TouchEvent) {
   const touch = event.touches[0];
   startX.value = touch.clientX;
@@ -187,5 +194,32 @@ function touchEnd(event: TouchEvent) {
       scrollStore.addScrollWidth();
     }
   }
+}
+function setListScroll() {
+  if (dashboardContent.value) {
+    console.log(dashboardContent.value.offsetWidth);
+    if (
+      scrollStore.getScrollWidth >=
+      dashboardContent.value.offsetWidth / scrollStore.getScrollBorder
+    ) {
+      scrollStore.setStopScroll();
+      return;
+    } else {
+      dashboardContent.value.style.transform = `translateX(-${scrollStore.getScrollWidth}px)`;
+    }
+  }
+}
+
+// DND LOGIC
+function onLessonDragStart(draggingLessonindex: number) {
+  lessonDragIndex.value = draggingLessonindex;
+}
+function onLessonDrop(dropLessonIndex: number) {
+  if (lessonDragIndex.value === null || lessonDragIndex.value === dropLessonIndex) return;
+  const updatedLessons = [...sortedLessons];
+  const [movedLesson] = updatedLessons.splice(lessonDragIndex.value, 1);
+  updatedLessons.splice(dropLessonIndex, 0, movedLesson);
+  sortedLessons.splice(0, sortedLessons.length, ...updatedLessons);
+  lessonDragIndex.value = null;
 }
 </script>
