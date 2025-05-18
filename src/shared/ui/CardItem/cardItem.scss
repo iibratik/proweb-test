@@ -1,9 +1,7 @@
 .card {
     user-select: none;
     cursor: pointer;
-    max-width: 350px;
     &-header {
-        width: 350px;
         &-upper {
             padding: 0 15px;
             display: flex;
@@ -19,6 +17,7 @@
         }
     }
     &-body {
+        width: 350px;
         background-color: #ffffff;
         padding: 15px;
         &-header {

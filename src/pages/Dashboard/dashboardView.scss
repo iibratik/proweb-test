@@ -28,9 +28,12 @@
         display: flex;
         width: 50%;
         gap: 15px;
-        & .lessons-lists {
-            display: flex;
-            gap: 15px;
+        & .lesson-list {
+            &s{
+                display: flex;
+                gap: 15px;
+                flex-wrap: nowrap;
+            }
         }
     }
 }

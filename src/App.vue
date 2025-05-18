@@ -11,13 +11,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useScrollState } from "@/store/scrollState";
 import Navbar from "@/widgets/Navbar/Navbar.vue";
 import Sidebar from "@/widgets/Sidebar/Sidebar.vue";
 
 const scrollState = useScrollState();
 const isActive = ref(false);
+onMounted(() => {
+  scrollState.setScrollOptions(window.innerWidth);
+});
 function handleScroll(event: WheelEvent) {
   if (event.ctrlKey) {
     event.preventDefault();

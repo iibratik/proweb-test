@@ -1,7 +1,12 @@
 <template>
   <div class="dashboard-body" @touchstart="touchStart" @touchend="touchEnd">
-    <ul class="lessons-lists" ref="dashboardContent">
-      <li class="lesson-list" v-for="(lesson, index) in sortedLessons" :key="lesson.id">
+    <ul class="lesson-lists" ref="dashboardContent">
+      <li
+        class="lesson-list"
+        v-for="(lesson, index) in sortedLessons"
+        :ref="(el) => index === 0 && setFirstItem(el as HTMLLIElement)"
+        :key="lesson.id"
+      >
         <CardItem
           draggable="true"
           class="lesson-card"
@@ -28,25 +33,22 @@ import LessonGroup from "@/types/lessonGroups";
 import { useScrollState } from "@/store/scrollState";
 import Lesson from "@/types/lesson";
 
+// store
 const lessonStore = useLessonsStore();
 const scrollStore = useScrollState();
-const dashboardContent = ref<HTMLDivElement | null>(null);
+
+// scroll
+const dashboardContent = ref<HTMLUListElement | null>(null);
+const firstListItem = ref<HTMLLIElement | null>(null);
 const startX = ref(0);
 const startY = ref(0);
 const lessonDragIndex = ref<null | number>(null);
-// const sortedLessons = computed(() => {
-//   return lessonStore.getFilteredLessons
-//     .slice()
-//     .sort(
-//       (a, b) =>
-//         new Date(a.groups[0].start_date).getTime() -
-//         new Date(b.groups[0].start_date).getTime()
-//     );
-// });
+
+//lessons
 const sortedLessons = reactive<Lesson[]>([]);
 
 watch(
-  [() => scrollStore.getScrollWidth, () => lessonStore.getFilteredLessons],
+  [() => scrollStore.getScrollIndex, () => lessonStore.getFilteredLessons],
   ([newScroll, newLessons], [oldScroll, oldLessons]) => {
     if (newScroll !== oldScroll) {
       setListScroll();
@@ -176,6 +178,9 @@ function setMergeLesson(lessons: OpenLesson[]) {
 }
 
 //scrool logic
+function setFirstItem(el: HTMLLIElement | null) {
+  if (el) firstListItem.value = el;
+}
 function touchStart(event: TouchEvent) {
   const touch = event.touches[0];
   startX.value = touch.clientX;
@@ -196,17 +201,9 @@ function touchEnd(event: TouchEvent) {
   }
 }
 function setListScroll() {
-  if (dashboardContent.value) {
-    console.log(dashboardContent.value.offsetWidth);
-    if (
-      scrollStore.getScrollWidth >=
-      dashboardContent.value.offsetWidth / scrollStore.getScrollBorder
-    ) {
-      scrollStore.setStopScroll();
-      return;
-    } else {
-      dashboardContent.value.style.transform = `translateX(-${scrollStore.getScrollWidth}px)`;
-    }
+  if (dashboardContent.value && firstListItem.value) {
+    dashboardContent.value.style.transform = `translateX(
+    -${scrollStore.getScrollIndex * firstListItem.value.offsetWidth}px`;
   }
 }
 
@@ -220,6 +217,7 @@ function onLessonDrop(dropLessonIndex: number) {
   const [movedLesson] = updatedLessons.splice(lessonDragIndex.value, 1);
   updatedLessons.splice(dropLessonIndex, 0, movedLesson);
   sortedLessons.splice(0, sortedLessons.length, ...updatedLessons);
+  lessonStore.resetFilteredLessons(sortedLessons);
   lessonDragIndex.value = null;
 }
 </script>

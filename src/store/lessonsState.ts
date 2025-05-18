@@ -74,7 +74,6 @@ export const useLessonsStore = defineStore('lessons', {
         },
         getFilterCategory(category: LessonCategory) {
             const index = this.activeFilterCategory.findIndex(c => c.id === category.id)
-
             if (index === -1) {
                 this.activeFilterCategory.push(category)
             } else {
@@ -92,6 +91,9 @@ export const useLessonsStore = defineStore('lessons', {
             this.filteredLessons = [...this.commonLessons];
             this.filteredLessons = this.filterByAllowed(this.filteredLessons, this.activeFilterCategory)
             this.filteredLessons = this.sortLessonsByEarliestGroupDate(this.filteredLessons);
+        },
+        resetFilteredLessons(updatedLessons: Lesson[]) {
+            this.filteredLessons.splice(0, this.filteredLessons.length, ...updatedLessons)
         },
         filterByAllowed(lessons: Lesson[], allowedCategories: LessonCategory[]): Lesson[] {
             const allowedKeys = new Set(allowedCategories.map(cat => cat.key));

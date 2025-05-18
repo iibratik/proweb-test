@@ -1,61 +1,56 @@
 import { defineStore } from "pinia";
-
+import { useLessonsStore } from "./lessonsState";
 export const useScrollState = defineStore('scroll-store', {
     state() {
         return {
             scrollWidth: 0,
             stopScroll: false,
-            scrollBorder: 0,
+            scrollIndex: 0,
+            scrollEndBrackPoint: 0
         }
     },
     getters: {
-        getScrollWidth(state) {
-            return state.scrollWidth
+        getScrollIndex(state) {
+            return state.scrollIndex
         },
-        getScrollBorder(state) {
-            return state.scrollBorder
-        }
     },
     actions: {
         setStopScroll() {
-            this.stopScroll = !this.stopScroll
         },
         addScrollWidth() {
-            if (this.stopScroll) {
+            const lessonStore = useLessonsStore()
+            if (this.scrollIndex === lessonStore.getFilteredLessons.length - Math.abs(this.scrollEndBrackPoint)) {
                 return;
-            } else {
-                this.scrollWidth += this.setScrollWidth()
             }
+            this.scrollIndex++
+
         },
         reduceScrollWidth() {
-            if (this.scrollWidth < 0) {
-                return;
-            } else {
-                if (this.stopScroll) {
-                    this.stopScroll = !this.stopScroll
-                }
-                this.scrollWidth -= this.setScrollWidth()
+            if (this.scrollIndex == 0) {
+                return
             }
+            this.scrollIndex--
         },
-        setScrollWidth() {
-            if (window.innerWidth >= 1320) {
-                this.scrollBorder = 1.13
-                return window.innerWidth / 6.5
-            } else if (window.innerWidth >= 1140) {
-                this.scrollBorder = 1.03
-                return window.innerWidth / 2
-            } else if (window.innerWidth >= 960) {
-                this.scrollBorder = 1.03
-                return window.innerWidth / 2
-            } else if (window.innerWidth >= 720) {
-                this.scrollBorder = 1.03
-                return window.innerWidth / 2
-            } else if (window.innerWidth >= 540) {
-                this.scrollBorder = 1.010
-                return window.innerWidth / 1.4
+        setScrollOptions(deviceWidth: number) {
+            switch (true) {
+                case deviceWidth >= 1920:
+                    this.scrollEndBrackPoint = 3
+                    break;
+                case deviceWidth >= 1440:
+                    this.scrollEndBrackPoint = 1
+                    break;
+                case deviceWidth >= 1024:
+                    this.scrollEndBrackPoint = 1
+                    break;
+                case deviceWidth >= 768:
+                    this.scrollEndBrackPoint = 1
+                    break;
+                default:
+                    this.scrollEndBrackPoint = 1
+
+                    break;
             }
-            this.scrollBorder = 1.010
-            return window.innerWidth
+
         }
     }
 })

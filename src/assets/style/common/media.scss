@@ -38,12 +38,12 @@
         height: 100vh;
         padding: 20px;
         background: #f9faf5;
-        &-header{
-            &__title{
+        &-header {
+            &__title {
                 transform: scale(0.4);
             }
         }
-        &-content{
+        &-content {
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -55,7 +55,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            &s{
+            &s {
                 display: flex;
                 flex-direction: column;
                 gap: 20px;
@@ -78,18 +78,47 @@
     }
 }
 @media screen and (max-width: 768px) {
-.profile-card{
-    flex-direction: column;
+    .profile-card {
+        flex-direction: column;
+    }
+    .profile-card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        align-items: center;
+    }
+    .profile-desc {
+        font-size: 16px;
+        text-align: center;
+    }
 }
-.profile-card-body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-items: center;
-}
-.profile-desc{
-    font-size: 16px;
-    text-align: center;
-}
-
+@media screen and (max-width: 425px) {
+    .card-header-upper {
+        flex-wrap: wrap;
+    }
+    .dashboard-body {
+        padding: 20px 0;
+        width: 100%;
+        .lesson {
+            &-list {
+                width: 100%;
+                & .card-body {
+                    width: 100%;
+                }
+                & .card-header-upper {
+                    justify-content: start;
+                }
+                &s {
+                    display: grid;
+                    grid-auto-flow: column;
+                    flex-grow: 1;
+                    gap: 0;
+                    grid-auto-columns: 90vw;
+                }
+            }
+            &-card {
+                width: 100%;
+            }
+        }
+    }
 }

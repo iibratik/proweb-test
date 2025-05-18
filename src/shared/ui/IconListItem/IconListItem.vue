@@ -30,7 +30,6 @@ const props = defineProps<{
 }>();
 const useMobStyle = computed(() => {
   if (window.innerWidth <= 960) {
-    console.log(useMobStyle);
     return true;
   }
   return false;
